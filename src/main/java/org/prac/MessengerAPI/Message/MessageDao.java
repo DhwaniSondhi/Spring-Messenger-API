@@ -20,41 +20,55 @@ public class MessageDao {
 	}
 
 	public List<Message> getMessages() {
-		Session session = sessionFactory.openSession();
-		return session.createQuery("from Message", Message.class).list();
+		try (Session session = sessionFactory.openSession()) {
+			return session.createQuery("from Message", Message.class).list();
+		}
 	}
 
 	public List<Message> getMessagesByAuthor(String author) {
-		Session session = sessionFactory.openSession();
-		return session.createQuery("from Message where author=:author", Message.class).setParameter("author", author)
-				.list();
+		try (Session session = sessionFactory.openSession()) {
+			return session.createQuery("from Message where author=:author", Message.class)
+							.setParameter("author", author)
+							.list();
+		}
 	}
 
 	public Message getMessageById(long id) {
-		Session session = sessionFactory.openSession();
-		return session.find(Message.class, id);
+		try (Session session = sessionFactory.openSession()) {
+			return session.find(Message.class, id);
+		}
 	}
 
 	public Message addMessage(Message message) {
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
-		session.save(message);
-		session.getTransaction().commit();
-		return message;
+		try (Session session = sessionFactory.openSession()) {
+			session.beginTransaction();
+			session.save(message);
+			session.getTransaction().commit();
+			return message;
+		}
 	}
 
-	public Message updateMessage(Message message) {
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
-		session.update(message);
-		session.getTransaction().commit();
-		return message;
+	public Message updateMessage(long id, Message message) {
+		try (Session session = sessionFactory.openSession()) {
+			session.beginTransaction();
+			Message msg = null;
+			try {
+				msg = getMessageById(id);
+			} catch (Exception e) {
+				msg = message;
+			}
+			session.saveOrUpdate(msg);
+			session.getTransaction().commit();
+			return message;
+		}
 	}
 
-	public void deleteMessage(Message message) {
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
-		session.delete(message);
-		session.getTransaction().commit();
+	public void deleteMessage(long id) {
+		try (Session session = sessionFactory.openSession()) {
+			session.beginTransaction();
+			Message message = getMessageById(id);
+			session.remove(session.contains(message) ? message : session.merge(message));
+			session.getTransaction().commit();
+		}
 	}
 }

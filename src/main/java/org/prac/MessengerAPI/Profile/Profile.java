@@ -6,10 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import org.hibernate.annotations.DynamicUpdate;
-
 @Entity
-@DynamicUpdate
 public class Profile {
 
 	@Id

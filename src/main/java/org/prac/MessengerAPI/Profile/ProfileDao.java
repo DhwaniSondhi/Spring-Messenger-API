@@ -20,50 +20,44 @@ public class ProfileDao {
 	}
 
 	public List<Profile> getProfiles() {
-		Session session = sessionFactory.openSession();
-		List<Profile> out = session.createQuery("from Profile", Profile.class).list();
-		session.close();
-		return out;
+		try (Session session = sessionFactory.openSession()) {
+			return session.createQuery("from Profile", Profile.class).list();
+		}
 	}
 
 	public Profile getProfileByProfileName(String profileName) {
-		Session session = sessionFactory.openSession();
-		Profile out= null;
-		try {
-			out = session.createQuery("from Profile where profileName=:profileName", Profile.class)
-					.setParameter("profileName", profileName).getSingleResult();
-		} catch (Exception e) {
-			return null;
-		} finally {
-			session.close();
+		try (Session session = sessionFactory.openSession()) {
+			return session.createQuery("from Profile where profileName=:profileName", Profile.class)
+							.setParameter("profileName", profileName)
+							.getSingleResult();
 		}
-		return out;
 	}
 
 	public Profile addProfile(Profile profile) {
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
-		session.save(profile);
-		session.getTransaction().commit();
-		session.close();
-		return profile;
+		try (Session session = sessionFactory.openSession()) {
+			session.beginTransaction();
+			session.save(profile);
+			session.getTransaction().commit();
+			return profile;
+		}
 	}
 
 	public Profile updateProfile(String profileName, Profile profile) {
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
-		Profile profiledb = getProfileByProfileName(profileName);
-		if (profiledb != null) {
-			profiledb.setfName(profile.getfName());
-			profiledb.setlName(profile.getlName());
-			profiledb.setProfileName(profile.getProfileName());
-		} else {
-			profiledb = profile;
+		try(Session session = sessionFactory.openSession()){
+			session.beginTransaction();
+			Profile profiledb;
+			try {
+				profiledb = getProfileByProfileName(profileName);
+				profiledb.setfName(profile.getfName());
+				profiledb.setlName(profile.getlName());
+				profiledb.setProfileName(profile.getProfileName());
+			} catch (Exception e) {
+				profiledb = profile;
+			}
+			session.saveOrUpdate(profiledb);
+			session.getTransaction().commit();
+			return profiledb;
 		}
-		session.saveOrUpdate(profiledb);
-		session.getTransaction().commit();
-		session.close();
-		return profiledb;
 	}
 
 	/*
@@ -77,11 +71,11 @@ public class ProfileDao {
 	 * make it managed it #merge().
 	 */
 	public void deleteProfile(String profileName) {
-		Session session = sessionFactory.openSession();
-		session.beginTransaction();
-		Profile profile = getProfileByProfileName(profileName);
-		session.remove(session.contains(profile) ? profile : session.merge(profile));
-		session.getTransaction().commit();
-		session.close();
+		try (Session session = sessionFactory.openSession()) {
+			session.beginTransaction();
+			Profile profile = getProfileByProfileName(profileName);
+			session.remove(session.contains(profile) ? profile : session.merge(profile));
+			session.getTransaction().commit();
+		}
 	}
 }

@@ -2,9 +2,11 @@ package org.prac.MessengerAPI.Message;
 
 import java.sql.Date;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+@Entity
 public class Message {
 
 	@Id
@@ -23,9 +25,8 @@ public class Message {
 		super();
 	}
 
-	public Message(long id, String message, Date created, String author) {
+	public Message(String message, Date created, String author) {
 		super();
-		this.id = id;
 		this.message = message;
 		this.created = created;
 		this.author = author;
@@ -64,18 +65,12 @@ public class Message {
 	}
 
 	public static class MessageBuilder {
-		private long id;
 		private String message;
 		private Date created;
 		private String author;
 
 		public MessageBuilder() {
 			super();
-		}
-
-		public MessageBuilder setId(long id) {
-			this.id = id;
-			return this;
 		}
 
 		public MessageBuilder setMessage(String message) {
@@ -94,7 +89,7 @@ public class Message {
 		}
 
 		public Message build() {
-			return new Message(id, message, created, author);
+			return new Message(message, created, author);
 		}
 	}
 }

@@ -40,13 +40,13 @@ public class MessageController {
 	}
 
 	@PutMapping("/message/{id}")
-	public Message updateMessages(@PathVariable long id, @RequestBody Message message) {
+	public Message updateMessage(@PathVariable long id, @RequestBody Message message) {
 		message.setId(id);
-		return messageDao.updateMessage(message);
+		return messageDao.updateMessage(id, message);
 	}
 
 	@DeleteMapping("/message/{id}")
-	public void deleteMessages(@PathVariable long id) {
-		messageDao.deleteMessage(new Message.MessageBuilder().setId(id).build());
+	public void deleteMessage(@PathVariable long id) {
+		messageDao.deleteMessage(id);
 	}
 }
