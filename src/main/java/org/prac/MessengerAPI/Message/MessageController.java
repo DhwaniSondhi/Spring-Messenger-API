@@ -1,9 +1,9 @@
 package org.prac.MessengerAPI.Message;
 
-import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,19 +28,18 @@ public class MessageController {
 		return messageDao.getMessageById(id);
 	}
 
-	@GetMapping("/messages/{author}")
-	public List<Message> getMessagesByAuthor(String author) {
+	@GetMapping("/messages/author/{author}")
+	public List<Message> getMessagesByAuthor(@PathVariable String author) {
 		return messageDao.getMessagesByAuthor(author);
 	}
 
 	@PostMapping("/message")
-	public Message addMessage(@RequestBody Message message) {
-		message.setCreated(new Date(new java.util.Date().getTime()));
+	public Message addMessage(@RequestBody @Validated Message message) {
 		return messageDao.addMessage(message);
 	}
 
 	@PutMapping("/message/{id}")
-	public Message updateMessage(@PathVariable long id, @RequestBody Message message) {
+	public Message updateMessage(@PathVariable long id, @RequestBody @Validated Message message) {
 		message.setId(id);
 		return messageDao.updateMessage(id, message);
 	}

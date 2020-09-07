@@ -54,12 +54,13 @@ public class MessageDao {
 			Message msg = null;
 			try {
 				msg = getMessageById(id);
+				msg.setMessage(message.getMessage());
 			} catch (Exception e) {
 				msg = message;
 			}
 			session.saveOrUpdate(msg);
 			session.getTransaction().commit();
-			return message;
+			return msg;
 		}
 	}
 

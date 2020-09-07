@@ -1,10 +1,13 @@
 package org.prac.MessengerAPI.Message;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.prac.MessengerAPI.Profile.CustomAnnotations.ProfilePresent;
 
 @Entity
 public class Message {
@@ -13,8 +16,10 @@ public class Message {
 	@GeneratedValue
 	private long id;
 	private String message;
-	private Date created;
+	@ProfilePresent(message = "The author given for the message is not present in the database.")
 	private String author;
+	@CreationTimestamp
+	private Timestamp created;
 
 	@Override
 	public String toString() {
@@ -25,10 +30,9 @@ public class Message {
 		super();
 	}
 
-	public Message(String message, Date created, String author) {
+	public Message(String message, String author) {
 		super();
 		this.message = message;
-		this.created = created;
 		this.author = author;
 	}
 
@@ -48,14 +52,6 @@ public class Message {
 		this.message = message;
 	}
 
-	public Date getCreated() {
-		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
 	public String getAuthor() {
 		return author;
 	}
@@ -64,9 +60,12 @@ public class Message {
 		this.author = author;
 	}
 
+	public Timestamp getCreated() {
+		return this.created;
+	}
+
 	public static class MessageBuilder {
 		private String message;
-		private Date created;
 		private String author;
 
 		public MessageBuilder() {
@@ -78,18 +77,13 @@ public class Message {
 			return this;
 		}
 
-		public MessageBuilder setCreated(Date created) {
-			this.created = created;
-			return this;
-		}
-
 		public MessageBuilder setAuthor(String author) {
 			this.author = author;
 			return this;
 		}
 
 		public Message build() {
-			return new Message(message, created, author);
+			return new Message(message, author);
 		}
 	}
 }

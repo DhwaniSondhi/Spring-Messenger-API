@@ -1,6 +1,5 @@
 package org.prac.MessengerAPI.Profile;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ public class ProfileController {
 
 	@PostMapping("/profile")
 	public Profile addProfile(@RequestBody Profile profile) {
-		profile.setCreated(new java.sql.Date(new Date().getTime()));
 		return profileDao.addProfile(profile);
 	}
 

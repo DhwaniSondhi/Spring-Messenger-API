@@ -1,10 +1,12 @@
 package org.prac.MessengerAPI.Profile;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 public class Profile {
@@ -15,18 +17,18 @@ public class Profile {
 	private String fName;
 	private String lName;
 	private String profileName;
-	private Date created;
+	@CreationTimestamp
+	private Timestamp created;
 
 	public Profile() {
 		super();
 	}
 
-	public Profile(String fName, String lName, String profileName, Date created) {
+	public Profile(String fName, String lName, String profileName) {
 		super();
 		this.fName = fName;
 		this.lName = lName;
 		this.profileName = profileName;
-		this.created = created;
 	}
 
 	public long getId() {
@@ -61,12 +63,8 @@ public class Profile {
 		this.profileName = profileName;
 	}
 
-	public Date getCreated() {
-		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
+	public Timestamp getCreated() {
+		return this.created;
 	}
 
 	@Override
@@ -80,7 +78,6 @@ public class Profile {
 		private String fName;
 		private String lName;
 		private String profileName;
-		private Date created;
 
 		public ProfileBuilder() {
 			super();
@@ -101,13 +98,8 @@ public class Profile {
 			return this;
 		}
 
-		public ProfileBuilder setCreated(Date created) {
-			this.created = created;
-			return this;
-		}
-
 		public Profile build() {
-			return new Profile(fName, lName, profileName, created);
+			return new Profile(fName, lName, profileName);
 		}
 	}
 }
