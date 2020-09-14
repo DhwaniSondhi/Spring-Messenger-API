@@ -1,9 +1,10 @@
-package org.prac.MessengerAPI.Profile.CustomAnnotations;
+package org.prac.MessengerAPI.customannotations.profilepresent;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.prac.MessengerAPI.Profile.ProfileDao;
+import org.prac.MessengerAPI.customexceptions.ValidationError;
+import org.prac.MessengerAPI.profile.ProfileDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ProfilePresentValidator implements ConstraintValidator<ProfilePresent, String> {
@@ -17,7 +18,7 @@ public class ProfilePresentValidator implements ConstraintValidator<ProfilePrese
 			profileDao.getProfileByProfileName(author);
 			return true;
 		} catch (Exception e) {
-			throw new ProfileNotPresentException(context.getDefaultConstraintMessageTemplate());
+			throw new ValidationError(context.getDefaultConstraintMessageTemplate());
 		}
 	}
 }

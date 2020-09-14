@@ -1,4 +1,4 @@
-package org.prac.MessengerAPI.Message;
+package org.prac.MessengerAPI.message;
 
 import java.sql.Timestamp;
 
@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.prac.MessengerAPI.Profile.CustomAnnotations.ProfilePresent;
+import org.prac.MessengerAPI.customannotations.profilepresent.ProfilePresent;
 
 @Entity
 public class Message {
@@ -16,7 +16,7 @@ public class Message {
 	@GeneratedValue
 	private long id;
 	private String message;
-	@ProfilePresent(message = "The author given for the message is not present in the database.")
+	@ProfilePresent
 	private String author;
 	@CreationTimestamp
 	private Timestamp created;

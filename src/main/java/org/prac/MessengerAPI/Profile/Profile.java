@@ -1,4 +1,4 @@
-package org.prac.MessengerAPI.Profile;
+package org.prac.MessengerAPI.profile;
 
 import java.sql.Timestamp;
 
@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.prac.MessengerAPI.customannotations.uniqueprofile.UniqueProfile;
 
 @Entity
 public class Profile {
@@ -16,6 +17,7 @@ public class Profile {
 	private long id;
 	private String fName;
 	private String lName;
+	@UniqueProfile
 	private String profileName;
 	@CreationTimestamp
 	private Timestamp created;

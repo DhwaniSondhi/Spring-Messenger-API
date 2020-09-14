@@ -1,8 +1,9 @@
-package org.prac.MessengerAPI.Message;
+package org.prac.MessengerAPI.message;
 
 import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,7 +17,7 @@ public class MessageDao {
 
 	@Autowired
 	public MessageDao(EntityManagerFactory entityManagerFactory) {
-		this.sessionFactory=entityManagerFactory.unwrap(SessionFactory.class);
+		this.sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
 	}
 
 	public List<Message> getMessages() {
@@ -25,17 +26,21 @@ public class MessageDao {
 		}
 	}
 
-	public List<Message> getMessagesByAuthor(String author) {
+	public Message getMessageById(long id) {
 		try (Session session = sessionFactory.openSession()) {
-			return session.createQuery("from Message where author=:author", Message.class)
-							.setParameter("author", author)
-							.list();
+			Message message = session.find(Message.class, id);
+			if (message == null) {
+				throw new NoResultException("No entity found for query");
+			} else {
+				return message;
+			}
 		}
 	}
 
-	public Message getMessageById(long id) {
+	public List<Message> getMessagesByAuthor(String author) {
 		try (Session session = sessionFactory.openSession()) {
-			return session.find(Message.class, id);
+			return session.createQuery("from Message where author=:author", Message.class)
+					.setParameter("author", author).list();
 		}
 	}
 
@@ -55,6 +60,7 @@ public class MessageDao {
 			try {
 				msg = getMessageById(id);
 				msg.setMessage(message.getMessage());
+				msg.setAuthor(message.getAuthor());
 			} catch (Exception e) {
 				msg = message;
 			}
@@ -66,10 +72,8 @@ public class MessageDao {
 
 	public void deleteMessage(long id) {
 		try (Session session = sessionFactory.openSession()) {
-			session.beginTransaction();
 			Message message = getMessageById(id);
 			session.remove(session.contains(message) ? message : session.merge(message));
-			session.getTransaction().commit();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package org.prac.MessengerAPI.Profile;
+package org.prac.MessengerAPI.profile;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.prac.MessengerAPI.Profile.CustomAnnotations;
+package org.prac.MessengerAPI.customannotations.profilepresent;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -11,11 +11,11 @@ import javax.validation.Payload;
 
 @Constraint(validatedBy = ProfilePresentValidator.class)
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE })
 @Documented
 public @interface ProfilePresent {
 
-	public String message() default "";
+	public String message() default "No profile name/author given for the message is present in the database.";
 
 	Class<?>[] groups() default {};
 

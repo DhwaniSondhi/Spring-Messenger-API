@@ -1,8 +1,9 @@
-package org.prac.MessengerAPI.Comment;
+package org.prac.MessengerAPI.comment;
 
 import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,26 +20,33 @@ public class CommentDao {
 		this.sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
 	}
 
-	public List<Comment> getComments(long messageId) {
+	public List<Comment> getComments() {
+		try (Session session = this.sessionFactory.openSession()) {
+			return session.createQuery("from Comment", Comment.class).list();
+		}
+	}
+
+	public Comment getCommentById(long commentId) {
+		try (Session session = this.sessionFactory.openSession()) {
+			Comment comment = session.find(Comment.class, commentId);
+			if (comment == null) {
+				throw new NoResultException("No entity found for query");
+			} else {
+				return comment;
+			}
+		}
+	}
+
+	public List<Comment> getCommentsByMessageId(long messageId) {
 		try (Session session = this.sessionFactory.openSession()) {
 			return session.createQuery("from Comment where messageId=:messageId", Comment.class)
 							.setParameter("messageId", messageId)
 							.list();
 		}
 	}
-
-	public Comment getComment(long messageId, long commentId) {
-		try (Session session = this.sessionFactory.openSession()) {
-			return session.createQuery("from Comment where messageId=:messageId and id=:commentId", Comment.class)
-							.setParameter("messageId", messageId)
-							.setParameter("commentId", commentId)
-							.uniqueResult();
-		}
-	}
 	
-	public Comment addComment(long messageId, Comment comment) {
+	public Comment addComment(Comment comment) {
 		try (Session session = this.sessionFactory.openSession()) {
-			comment.setMessageId(messageId);
 			session.beginTransaction();
 			session.save(comment);
 			session.getTransaction().commit();
@@ -46,26 +54,27 @@ public class CommentDao {
 		}
 	}
 
-	public Comment updateComment(long messageId, long commentId, Comment comment) {
+	public Comment updateComment(long commentId, Comment comment) {
 		try (Session session = this.sessionFactory.openSession()) {
 			session.beginTransaction();
 			Comment commentDb;
 			try {
-				commentDb = getComment(messageId, commentId);
+				commentDb = getCommentById(commentId);
 				commentDb.setCommentString(comment.getCommentString());
+				commentDb.setMessageId(comment.getMessageId());
 			} catch (Exception e) {
 				commentDb = comment;
 			}
-			session.saveOrUpdate(session.contains(commentDb) ? commentDb : session.merge(commentDb));
+			session.saveOrUpdate(commentDb);
 			session.getTransaction().commit();
 			return commentDb;
 		}
 	}
 
-	public void deleteComment(long messageId, long commentId) {
+	public void deleteComment(long commentId) {
 		try (Session session = this.sessionFactory.openSession()) {
 			session.beginTransaction();
-			Comment commentDb = getComment(messageId, commentId);
+			Comment commentDb = getCommentById(commentId);
 			session.remove(session.contains(commentDb) ? commentDb : session.merge(commentDb));
 			session.getTransaction().commit();
 		}

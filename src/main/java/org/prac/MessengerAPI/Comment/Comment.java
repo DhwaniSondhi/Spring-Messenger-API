@@ -1,4 +1,4 @@
-package org.prac.MessengerAPI.Comment;
+package org.prac.MessengerAPI.comment;
 
 import java.sql.Timestamp;
 
@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.prac.MessengerAPI.customannotations.messagepresent.MessagePresent;
 
 @Entity
 public class Comment {
@@ -15,6 +16,7 @@ public class Comment {
 	@GeneratedValue
 	private long id;
 	private String commentString;
+	@MessagePresent
 	private long messageId;
 	@CreationTimestamp
 	private Timestamp created;

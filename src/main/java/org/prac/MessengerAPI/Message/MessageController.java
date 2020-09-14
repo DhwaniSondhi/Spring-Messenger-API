@@ -1,7 +1,10 @@
-package org.prac.MessengerAPI.Message;
+package org.prac.MessengerAPI.message;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.prac.MessengerAPI.customannotations.profilepresent.ProfilePresent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,42 +13,44 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/messages")
+@Validated
 public class MessageController {
 
 	@Autowired
-	MessageDao messageDao;
+	MessageService messageService;
 
-	@GetMapping("/messages")
+	@GetMapping
 	public List<Message> getMessages() {
-		return messageDao.getMessages();
+		return messageService.getMessages();
 	}
 
-	@GetMapping("/messages/{id}")
-	public Message getMessageById(@PathVariable long id) {
-		return messageDao.getMessageById(id);
+	@GetMapping("/{messageId}")
+	public Message getMessageById(@PathVariable long messageId) {
+		return messageService.getMessageById(messageId);
 	}
 
-	@GetMapping("/messages/author/{author}")
-	public List<Message> getMessagesByAuthor(@PathVariable String author) {
-		return messageDao.getMessagesByAuthor(author);
+	@GetMapping("/author/{author}")
+	public List<Message> getMessagesByAuthor(@PathVariable @ProfilePresent String author) {
+		return messageService.getMessagesByAuthor(author);
 	}
 
-	@PostMapping("/message")
-	public Message addMessage(@RequestBody @Validated Message message) {
-		return messageDao.addMessage(message);
+	@PostMapping
+	public Message addMessage(@RequestBody @Valid Message message) {
+		return messageService.addMessage(message);
 	}
 
-	@PutMapping("/message/{id}")
-	public Message updateMessage(@PathVariable long id, @RequestBody @Validated Message message) {
-		message.setId(id);
-		return messageDao.updateMessage(id, message);
+	@PutMapping("/{messageId}")
+	public Message updateMessage(@PathVariable long messageId, @RequestBody @Valid Message message) {
+		return messageService.updateMessage(messageId, message);
 	}
 
-	@DeleteMapping("/message/{id}")
-	public void deleteMessage(@PathVariable long id) {
-		messageDao.deleteMessage(id);
+	@DeleteMapping("/{messageId}")
+	public void deleteMessage(@PathVariable long messageId) {
+		messageService.deleteMessage(messageId);
 	}
 }
